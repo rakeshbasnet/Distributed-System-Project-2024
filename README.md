@@ -1,4 +1,4 @@
-# Web Application with Docker, Kubernetes, and GitHub
+# Distributed Multi-tier Web Application with Docker, Kubernetes, and GitHub
 
 ## Project Overview
 
