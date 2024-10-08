@@ -24,8 +24,7 @@ This project is a web application that demonstrates the integration of a React f
     - [Kubernetes Setup](#kubernetes-setup)
 4. [Version Control](#version-control)
 5. [Deployment](#deployment)
-6. [Monitoring and Logging](#monitoring-and-logging)
-7. [Challenges and Solutions](#challenges-and-solutions)
+6. [Challenges and Solutions](#challenges-and-solutions)
 
 ---
 
@@ -86,7 +85,7 @@ Make sure you have the following installed:
     ```bash
     flask run
     ```
-4. The backend will run at `http://localhost:5000`.
+4. The backend will run at `http://localhost:8082`.
 
 ### Docker Setup
 
@@ -109,7 +108,7 @@ Make sure you have the following installed:
     ```
 3. Run the container:
     ```bash
-    docker run -p 5000:5000 backend
+    docker run -p 8082:8082 backend
     ```
 
 ### Kubernetes Setup
@@ -125,8 +124,8 @@ Make sure you have the following installed:
 
 2. Apply Kubernetes configuration:
     ```bash
-    kubectl apply -f k8s/frontend-deployment.yaml
-    kubectl apply -f k8s/backend-deployment.yaml
+    kubectl apply -f frontend/deployment.yaml
+    kubectl apply -f backend/deployment.yaml
     ```
 
 3. Verify deployments:
@@ -158,15 +157,6 @@ The application is deployed on **Google Kubernetes Engine (GKE)**. Each service 
 
 ---
 
-## Monitoring and Logging
-
-**Google Cloud Operations (formerly Stackdriver)** is used for monitoring and logging the Kubernetes cluster.
-
-- Logs can be accessed via the **Logs Explorer** in the Google Cloud Console.
-- Resource usage (CPU, memory) and pod status can be monitored using **Cloud Monitoring**.
-
----
-
 ## Challenges and Solutions
 
 ### 1. **Environment Variables**:
@@ -178,8 +168,8 @@ Optimizing Dockerfiles for both the frontend and backend was a challenge, as the
 - **Solution**: I used multi-stage builds in the Dockerfiles to reduce image size, especially for the frontend.
 
 ### 3. **Kubernetes Networking**:
-Ensuring the frontend could communicate with the backend in the Kubernetes cluster required configuring services correctly.
-- **Solution**: I exposed the backend service internally using `ClusterIP` and the frontend service with a `LoadBalancer`.
+Ensuring the backend could communicate with the database in the Kubernetes cluster required running cloud sql proxy container side by side with project.
+- **Solution**: I deployed the `cloud sql proxy` container alongside the `backend project container`. 
 
 ---
 
