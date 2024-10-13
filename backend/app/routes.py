@@ -9,12 +9,12 @@ def index():
 
 
 @app.route('/api/users', methods=['GET'])
-def get_songs():
+def get_users():
     return get()
 
 
 @app.route('/api/add-user', methods=['POST'])
-def add_song():
+def add_user():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
