@@ -104,4 +104,3 @@ substitutions:
 # Specify logsBucket for Cloud Build logs
 options:
   logging: CLOUD_LOGGING_ONLY  # Logs will go to Cloud Logging
-  logsBucket: gs://ds-cloud-build-log-bucket  # Replace with your actual Cloud Storage bucket
