@@ -56,7 +56,7 @@ steps:
       - '-c'
       - |
         FLASK_PUBLIC_IP=$(kubectl get svc flask-app-service -n backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        echo "FLASK_PUBLIC_IP=$FLASK_PUBLIC_IP" >> $HOME/.env  # Write to the .env file
+        echo "REACT_APP_BASE_URL=$FLASK_PUBLIC_IP" >> $HOME/.env  # Write to the .env file
 
   # Step 7: Set up React Environment with Flask IP using the .env file
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -66,7 +66,7 @@ steps:
       - '-c'
       - |
         source $HOME/.env  # Load environment variables from the .env file
-        echo "REACT_APP_BASE_URL=http://$FLASK_PUBLIC_IP" > frontend/.env  # Set the Flask IP in React's .env
+        cp $HOME/.env frontend/.env  # Copy .env to frontend/.env
 
   # Step 8: Build React Docker Image
   - name: 'gcr.io/cloud-builders/docker'
