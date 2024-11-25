@@ -30,7 +30,6 @@ def get():
     if conn is None:
         # Handle the case where the connection failed
         return {"error": "Database connection failed"}, 500
-
     with conn.cursor() as cursor:
         cursor.execute("SELECT * FROM users")  # Example query
         results = cursor.fetchall()
@@ -44,5 +43,14 @@ def create(user):
     with conn.cursor() as cursor:
         cursor.execute('INSERT INTO users (name, age, sex) VALUES(%s, %s, %s)',
                        (user["name"], user["age"], user["sex"]))
+    conn.commit()
+    conn.close()
+
+
+def save_topic_message(message):
+    conn = open_connection()
+    with conn.cursor() as cursor:
+        cursor.execute('INSERT INTO topic_messages (topic_message) VALUES(%s)',
+                       (message.data.decode("utf-8")))
     conn.commit()
     conn.close()

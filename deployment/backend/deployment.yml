@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-app
+  namespace: backend
 spec:
   replicas: 2
   selector:
@@ -18,20 +19,32 @@ spec:
         ports:
         - containerPort: 8082
         env:
-          - name: CLOUD_SQL_HOST
-            value: 127.0.0.1  # Connect to the Cloud SQL Proxy via localhost
-          - name: CLOUD_SQL_DATABASE_NAME
-            value: flask_app_db
-          - name: CLOUD_SQL_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: db_user
-          - name: CLOUD_SQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: db_pass
+        - name: CLOUD_SQL_HOST
+          value: 127.0.0.1  # Connect to the Cloud SQL Proxy via localhost
+        - name: CLOUD_SQL_DATABASE_NAME
+          value: flask_app_db
+        - name: CLOUD_SQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: db_user
+        - name: CLOUD_SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: db_pass
+        - name: SUBSCRIPTION_PATH
+          valueFrom:
+            secretKeyRef:
+              name: pub-sub-credentials
+              key: subscription_path
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secrets/gcp-pubsub-credentials/credentials.json
+        volumeMounts:
+        - name: gcp-pubsub-credentials
+          mountPath: /secrets/gcp-pubsub-credentials
+          readOnly: true
+
 
       # Cloud SQL Auth Proxy sidecar container
       - name: cloud-sql-proxy
@@ -56,3 +69,6 @@ spec:
       - name: cloudsql-instance-credentials
         secret:
           secretName: gcp-sql-credentials
+      - name: gcp-pubsub-credentials
+        secret:
+          secretName: gcp-pubsub-credentials
