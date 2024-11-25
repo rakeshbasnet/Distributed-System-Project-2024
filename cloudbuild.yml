@@ -15,21 +15,21 @@ steps:
       - 'push'
       - 'gcr.io/white-proxy-434723-d6/distributed-project-app-backend:latest'  # Push to GCR
 
-  # Step 3: Set up Docker build for React
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Build React Docker Image'
-    args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Tagging React Docker image
-      - './frontend'  # Path to the React app's Dockerfile and source code
+  # # Step 3: Set up Docker build for React
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   id: 'Build React Docker Image'
+  #   args:
+  #     - 'build'
+  #     - '-t'
+  #     - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Tagging React Docker image
+  #     - './frontend'  # Path to the React app's Dockerfile and source code
 
-  # Step 4: Push React Docker image to GCR
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push React Docker Image to GCR'
-    args:
-      - 'push'
-      - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Push to GCR
+  # # Step 4: Push React Docker image to GCR
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   id: 'Push React Docker Image to GCR'
+  #   args:
+  #     - 'push'
+  #     - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Push to GCR
 
   # Step 5: Apply namespaces to ensure 'backend' and 'frontend' namespaces exist
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -47,47 +47,45 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'flask-deployment.yml'  # Flask deployment YAML
+      - './deployment/backend/deployment.yml'  # Flask deployment YAML
       - '-f'
-      - 'flask-service.yml'     # Flask service YAML
+      - './deployment/backend/service.yml'     # Flask service YAML
 
-  # Step 7: Get Flask App's public IP from the LoadBalancer service
+  # Step 7: Get Flask Public IP and set as an environment variable
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Get Flask Public IP'
-    args:
-      - 'get'
-      - 'svc'
-      - 'flask-app-service'    # Name of Flask service
-      - '-n'
-      - 'backend'              # Namespace where Flask app is deployed
-      - '-o'
-      - 'jsonpath="{.status.loadBalancer.ingress[0].ip}"'
-    result: 'FLASK_PUBLIC_IP'  # Store Flask public IP
-
-  # Step 8: Update .env.production for React with Flask's public IP as the base URL
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Set up React Environment'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "REACT_APP_API_BASE_URL=http://$FLASK_PUBLIC_IP:8082" > react-app/.env
+        FLASK_PUBLIC_IP=$(kubectl get svc flask-app-service -n backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "FLASK_PUBLIC_IP=$FLASK_PUBLIC_IP" >> $HOME/.env
 
-  # # Step 9: Build the React app Docker image
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   id: 'Build React Docker Image'
-  #   args:
-  #     - 'build'
-  #     - '-t'
-  #     - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Tagging React Docker image
-  #     - './react-app'  # Path to React Dockerfile and source code
+  # Step 8: Set up React Environment with Flask IP
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Set up React Env'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source $HOME/.env
+        echo "REACT_APP_BASE_URL=http://$FLASK_PUBLIC_IP" > frontend/.env
 
-  # # Step 10: Push React Docker image to GCR
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   id: 'Push React Docker Image to GCR'
-  #   args:
-  #     - 'push'
-  #     - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Push to GCR
+  # Step 9: Build the React app Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build React Docker Image'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Tagging React Docker image
+      - './react-app'  # Path to React Dockerfile and source code
+
+  # Step 10: Push React Docker image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push React Docker Image to GCR'
+    args:
+      - 'push'
+      - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Push to GCR
 
   # Step 11: Deploy React App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
