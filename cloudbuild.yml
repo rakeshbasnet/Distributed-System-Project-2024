@@ -14,7 +14,7 @@ steps:
     args:
       - 'push'
       - 'gcr.io/white-proxy-434723-d6/distributed-project-app-backend:latest'  # Push to GCR
-  
+
   # Step 3: Authenticate to GKE and set the Kubernetes cluster context
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Authenticate to GKE'
@@ -37,7 +37,6 @@ steps:
       - './deployment/backend/namespace.yml'  # Ensure backend namespace is created
       - '-f'
       - './deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
-
 
   # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -97,10 +96,6 @@ steps:
 
 # Timeout in case something goes wrong
 timeout: 1200s
-
-# Optional substitution for project ID if required
-substitutions:
-  _PROJECT_ID: 'white-proxy-434723-d6'  # Replace with your actual Google Cloud Project ID
 
 # Specify logsBucket for Cloud Build logs
 options:
