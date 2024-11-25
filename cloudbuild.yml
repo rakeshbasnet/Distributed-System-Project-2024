@@ -55,8 +55,7 @@ steps:
     args:
       - '-c'
       - |
-        FLASK_PUBLIC_IP=$(kubectl get svc flask-app-service -n backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        echo "REACT_APP_BASE_URL=$FLASK_PUBLIC_IP" >> $HOME/.env  # Write to the .env file
+        echo "REACT_APP_BASE_URL=$(kubectl get svc flask-app-service -n backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" >> $HOME/.env  # Write to the .env file
 
   # Step 7: Set up React Environment with Flask IP using the .env file
   - name: 'gcr.io/cloud-builders/gcloud'
