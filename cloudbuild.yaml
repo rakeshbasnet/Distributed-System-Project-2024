@@ -22,7 +22,7 @@ steps:
       - 'container'
       - 'clusters'
       - 'get-credentials'
-      - '--region'
+      - '--location'
       - 'us-central1'  # Update to the region of your GKE cluster
       - '--project'
       - 'white-proxy-434723-d6'  # Replace with your Google Cloud project ID
