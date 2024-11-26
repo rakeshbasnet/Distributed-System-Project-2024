@@ -50,16 +50,10 @@ steps:
       - |
         # Check the current context to verify GKE connection
         kubectl config current-context
-        # Set the image tag from the commit SHA
-        BACKEND_IMAGE_TAG="gcr.io/white-proxy-434723-d6/distributed-project-app-backend:$COMMIT_SHA"
-        # Debugging step: output the image tag
-        echo "Deploying image: $BACKEND_IMAGE_TAG"
         # Use sed to replace the placeholder with the actual image tag in the deployment file
-        sed "s|{{BACKEND_IMAGE_TAG}}|$BACKEND_IMAGE_TAG|g" ./deployment/backend/deployment.yml > ./deployment/backend/deployment-substituted.yml
-        # Check the substituted deployment file (optional)
-        cat ./deployment/backend/deployment-substituted.yml
+        sed -i 's#image: gcr.io/white-proxy-434723-d6/distributed-project-app-backend:.*#image: gcr.io/white-proxy-434723-d6/distributed-project-app-backend:$COMMIT_SHA#' ./deployment/backend/deployment.yml
         # Apply the substituted YAML
-        kubectl apply -f ./deployment/backend/deployment-substituted.yml
+        kubectl apply -f ./deployment/backend/deployment.yml
         kubectl apply -f ./deployment/backend/service.yml
 
   # Step 8: Build React Docker Image
@@ -87,16 +81,10 @@ steps:
       - |
         # Check the current context to verify GKE connection
         kubectl config current-context
-        # Set the image tag from the commit SHA
-        FRONTEND_IMAGE_TAG="gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:$COMMIT_SHA"
-        # Debugging step: output the image tag
-        echo "Deploying image: $FRONTEND_IMAGE_TAG"
         # Use sed to replace the placeholder with the actual image tag in the deployment file
-        sed "s|{{FRONTEND_IMAGE_TAG}}|$FRONTEND_IMAGE_TAG|g" ./deployment/frontend/deployment.yml > ./deployment/frontend/deployment-substituted.yml
-        # Check the substituted deployment file (optional)
-        cat ./deployment/frontend/deployment-substituted.yml
-        # Apply the substituted YAML
-        kubectl apply -f ./deployment/frontend/deployment-substituted.yml
+        sed -i 's#image: gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:.*#image: gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:$COMMIT_SHA#' ./deployment/frontend/deployment.yml
+        # Apply the manifest YAML
+        kubectl apply -f ./deployment/frontend/deployment.yml
         kubectl apply -f ./deployment/frontend/service.yml
 
 # Timeout in case something goes wrong
