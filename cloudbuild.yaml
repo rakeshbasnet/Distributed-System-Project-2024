@@ -97,6 +97,5 @@ steps:
 # Timeout in case something goes wrong
 timeout: 1200s
 
-# Specify logsBucket for Cloud Build logs
 options:
   logging: CLOUD_LOGGING_ONLY  # Logs will go to Cloud Logging
