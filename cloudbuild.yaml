@@ -39,10 +39,12 @@ steps:
         kubectl config current-context
         # Create the namespace
         kubectl apply -f ./deployment/backend/namespace.yml
+        kubectl apply -f ./deployment/frontend/namespace.yml  # Ensure frontend namespace is created
 
 
+  # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'Create Frontend Namespace'
+    id: 'Deploy Flask App'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -50,37 +52,9 @@ steps:
         # Check the current context to verify GKE connection
         kubectl config current-context
         # Create the namespace
-        kubectl apply -f ./deployment/frontend/namespace.yml  # Ensure frontend namespace is created
+        kubectl apply -f ./deployment/backend/deployment.yml  # Deploy backend deployment file
+        kubectl apply -f ./deployment/backend/service.yml  # Deploy backend service file
 
-  # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
-  - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'Deploy Flask App'
-    args:
-      - 'apply'
-      - '-f'
-      - './deployment/backend/deployment.yml'  # Flask deployment YAML
-      - '-f'
-      - './deployment/backend/service.yml'     # Flask service YAML
-
-  # Step 6: Get Flask Public IP and set as an environment variable
-  # - name: 'gcr.io/cloud-builders/kubectl'
-  #   id: 'Get Flask Public IP'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       REACT_APP_BASE_URL=$(kubectl get svc flask-app-service -n backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  #       echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> $HOME/.env  # Write to the .env file
-
-  # Step 7: Set up React Environment with Flask IP using the .env file
-  # - name: 'gcr.io/cloud-builders/gcloud'
-  #   id: 'Set up React Env'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       source $HOME/.env  # Load environment variables from the .env file
-  #       cp $HOME/.env frontend/.env  # Set the Flask IP in React's .env
 
   # Step 8: Build React Docker Image
   - name: 'gcr.io/cloud-builders/docker'
@@ -101,12 +75,15 @@ steps:
   # Step 10: Deploy React App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Deploy React App'
+    entrypoint: 'bash'
     args:
-      - 'apply'
-      - '-f'
-      - './deployment/frontend/deployment.yml'  # React deployment YAML
-      - '-f'
-      - './deployment/frontend/service.yml'     # React service YAML
+      - '-c'
+      - |
+        # Check the current context to verify GKE connection
+        kubectl config current-context
+        # Create the namespace
+        kubectl apply -f ./deployment/frontend/deployment.yml  # Deploy frontend deployment file
+        kubectl apply -f ./deployment/frontend/service.yml  # Deploy frontend service file
 
 # Timeout in case something goes wrong
 timeout: 1200s
