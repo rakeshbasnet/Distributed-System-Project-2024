@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "${FRONTEND_IMAGE_TAG}"
+        image: "{{FRONTEND_IMAGE_TAG}}"
         ports:
         - containerPort: 80
         env:
