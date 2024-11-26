@@ -22,7 +22,7 @@ FROM nginx:alpine
 # Copy the build folder from Stage 1 to the Nginx HTML folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-ENV REACT_APP_BASE_URL="http://flask-app-service.backend.svc.cluster.local:8082"
+ENV REACT_APP_BASE_URL="http://34.68.65.117"
 # Expose port 80 to the host
 EXPOSE 80
 
