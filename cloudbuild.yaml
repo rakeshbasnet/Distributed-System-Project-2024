@@ -6,7 +6,7 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/white-proxy-434723-d6/distributed-project-app-backend:latest'  # Tagging Flask Docker image
-      - './backend'  # Path to the Flask app's Dockerfile and source code
+      - '/backend'  # Path to the Flask app's Dockerfile and source code
 
   # Step 2: Push Flask Docker image to GCR
   - name: 'gcr.io/cloud-builders/docker'
@@ -23,7 +23,7 @@ steps:
       - 'clusters'
       - 'get-credentials'
       - '--region'
-      - 'us-east1'  # Update to the region of your GKE cluster
+      - 'us-central1'  # Update to the region of your GKE cluster
       - '--project'
       - 'white-proxy-434723-d6'  # Replace with your Google Cloud project ID
       - 'flask-app-cluster'  # Replace with your actual GKE cluster name
@@ -34,9 +34,9 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - './deployment/backend/namespace.yml'  # Ensure backend namespace is created
+      - '/deployment/backend/namespace.yml'  # Ensure backend namespace is created
       - '-f'
-      - './deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
+      - '/deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
 
   # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -44,9 +44,9 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - './deployment/backend/deployment.yml'  # Flask deployment YAML
+      - '/deployment/backend/deployment.yml'  # Flask deployment YAML
       - '-f'
-      - './deployment/backend/service.yml'     # Flask service YAML
+      - '/deployment/backend/service.yml'     # Flask service YAML
 
   # Step 6: Get Flask Public IP and set as an environment variable
   # - name: 'gcr.io/cloud-builders/kubectl'
@@ -75,7 +75,7 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest'  # Tagging React Docker image
-      - './react-app'  # Path to React Dockerfile and source code
+      - '/frontend'  # Path to React Dockerfile and source code
 
   # Step 9: Push React Docker image to GCR
   - name: 'gcr.io/cloud-builders/docker'
@@ -90,9 +90,9 @@ steps:
     args:
       - 'apply'
       - '-f'
-      - 'react-deployment.yml'  # React deployment YAML
+      - '/deployment/frontend/deployment.yml'  # React deployment YAML
       - '-f'
-      - 'react-service.yml'     # React service YAML
+      - '/deployment/frontend/service.yml'     # React service YAML
 
 # Timeout in case something goes wrong
 timeout: 1200s
