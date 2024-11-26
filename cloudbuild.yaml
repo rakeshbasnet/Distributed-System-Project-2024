@@ -31,10 +31,15 @@ steps:
   # Step 4: Apply namespaces to ensure 'backend' and 'frontend' namespaces exist
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Create Backend Namespace'
+    entrypoint: 'bash'
     args:
-      - 'apply'
-      - '-f'
-      - './deployment/backend/namespace.yml'  # Ensure backend namespace is created
+      - '-c'
+      - |
+        # Check the current context to verify GKE connection
+        kubectl config current-context
+        # Create the namespace
+        kubectl apply -f ./deployment/backend/namespace.yml
+
 
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Create Frontend Namespace'
