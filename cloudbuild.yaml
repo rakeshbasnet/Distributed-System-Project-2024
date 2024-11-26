@@ -50,7 +50,7 @@ steps:
         # Check the current context to verify GKE connection
         kubectl config current-context
         # Create the namespace
-        kubectl apply -f ./deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
+        kubectl apply -f ./deployment/frontend/namespace.yml  # Ensure frontend namespace is created
 
   # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
