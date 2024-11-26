@@ -13,6 +13,8 @@ RUN npm install
 # Copy the rest of the project files
 COPY . .
 
+ENV REACT_APP_BASE_URL="http://34.68.65.117"
+
 # Build the React app
 RUN npm run build
 
@@ -22,7 +24,6 @@ FROM nginx:alpine
 # Copy the build folder from Stage 1 to the Nginx HTML folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-ENV REACT_APP_BASE_URL="http://34.68.65.117"
 # Expose port 80 to the host
 EXPOSE 80
 
