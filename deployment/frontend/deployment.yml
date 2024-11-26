@@ -20,4 +20,4 @@ spec:
         - containerPort: 80
         env:
           - name: REACT_APP_BASE_URL
-            value: flask-app-service.backend.svc.cluster.local #Replace it with production backend ip before deployment
+            value: http://34.68.65.117 #Replace it with production backend ip before deployment
