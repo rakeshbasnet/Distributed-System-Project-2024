@@ -30,11 +30,16 @@ steps:
 
   # Step 4: Apply namespaces to ensure 'backend' and 'frontend' namespaces exist
   - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'Create Namespaces'
+    id: 'Create Backend Namespace'
     args:
       - 'apply'
       - '-f'
       - './deployment/backend/namespace.yml'  # Ensure backend namespace is created
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'Create Frontend Namespace'
+    args:
+      - 'apply'
       - '-f'
       - './deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
 
