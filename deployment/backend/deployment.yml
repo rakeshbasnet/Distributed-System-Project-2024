@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: flask-app-container
-        image: gcr.io/white-proxy-434723-d6/distributed-project-app-backend:latest
+        image: "${BACKEND_IMAGE_TAG}"
         ports:
         - containerPort: 8082
         env:

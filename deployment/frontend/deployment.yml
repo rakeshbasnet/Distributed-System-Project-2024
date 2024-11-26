@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: gcr.io/white-proxy-434723-d6/distributed-project-app-frontend:latest
+        image: "${FRONTEND_IMAGE_TAG}"
         ports:
         - containerPort: 80
         env:
