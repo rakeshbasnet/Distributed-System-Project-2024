@@ -43,10 +43,14 @@ steps:
 
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Create Frontend Namespace'
+    entrypoint: 'bash'
     args:
-      - 'apply'
-      - '-f'
-      - './deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
+      - '-c'
+      - |
+        # Check the current context to verify GKE connection
+        kubectl config current-context
+        # Create the namespace
+        kubectl apply -f ./deployment/frontend/namespace.yml'  # Ensure frontend namespace is created
 
   # Step 5: Deploy Flask App to GKE using the latest Docker image from GCR
   - name: 'gcr.io/cloud-builders/kubectl'
