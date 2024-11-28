@@ -7,7 +7,7 @@ const HomePage = () => {
     <Container maxWidth="md" sx={{ textAlign: 'center', marginTop: '50px' }}>
       <Box sx={{ marginBottom: 4 }}>
         <Typography variant="h2" component="h1" gutterBottom>
-          Welcome to User Management
+          Welcome to User Management (This is the test for cloud build CI/CD)
         </Typography>
         <Typography variant="h5" component="p" color="textSecondary">
           Manage your users effectively. You can add new users and view the list of all users.
